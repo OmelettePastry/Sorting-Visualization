@@ -18,10 +18,11 @@ const VARIABLE = "variable-speed";
 const HIGHLIGHT_LIMIT = 5;
 
 const BAR_WIDTH = 5;
-const NUM_ITEMS = 75;
+const NUM_ITEMS = 100;
 const HEIGHT_MULT = 4;
-const SWAP_VAL = 15;    // Swap speed (distance divided by this number)
+const SWAP_VAL = 10;    // Swap speed (distance divided by this number)
 const FIXED_SPEED = 20;  // Fied speed
+const BAR_SPACING = 4;
 
 // Note reset of values
 let initializedOff = false;
@@ -245,9 +246,6 @@ function partition (array, lo, hi, r)
 
   swap(array, hi, rightIndex + 1);
 
-  // listArray.push(new AnimateCompare(HIGHLIGHT, array[leftIndex], array[rightIndex + 1], pivotValue, lo, hi));
-  // backupListArray.push(new AnimateCompare(HIGHLIGHT, array[leftIndex], array[rightIndex + 1], pivotValue, lo, hi));  
-
   return (rightIndex + 1);
 }
 
@@ -261,19 +259,12 @@ function swap (array, a, b)
 
 function createBarList (array, width)
 {
-  // TTT
-  // console.log("CreateBatList");
-  let startX = Math.floor((canvasWidth - (array.length * (width + 5))) / 2);
+  let startX = Math.floor((canvasWidth - (array.length * (width + BAR_SPACING))) / 2);
   let ourBarList = new BarList();
 
   for (let i = 0; i < array.length; i++)
   {
-    // Remove ?
-    /*
-    ourBars[array[i]] = { "originX" : (startX + (i * (width + 5))),
-                          "height" : array[i] * 10, "color" : 'rgb(255, 0, 255)' };
-    */
-    ourBarList.addItem(new BarItem(array[i], startX + (i * (width + 5)), array[i] * HEIGHT_MULT, "rgb(255, 0, 255)"));
+    ourBarList.addItem(new BarItem(array[i], startX + (i * (width + BAR_SPACING)), array[i] * HEIGHT_MULT, "rgb(255, 0, 255)"));
   }
 
   return ourBarList;
@@ -281,26 +272,13 @@ function createBarList (array, width)
 
 function animateItem ()
 {
-  // TTT
-  // console.log("animateItem()");
 
   let elementValue1, elementValue2, pivotValue, barObject1, barObject2;
   let barArray = barList.getArray();
 
-  // console.log(listArray.length);
-  // console.log("Aftermath");
-
-  // let animateFinished = false;
-
-  // TTT
-  // console.log(item.getAnimateType());
-
   /** Animation setup for a Pivot Swap */  
   if (item.getAnimateType() === PIVOT_SWAP)
   {
-    // TTT
-    // console.log("PIVOT SWAP");
-    // console.log(item);
 
     // 'elementValue1' represent the pivot
     elementValue1 = item.getPivot();
@@ -316,24 +294,10 @@ function animateItem ()
     barObject1.setColor("rgb(255, 0, 0)");
     barObject2.setColor("rgb(0, 0, 255)");
 
-    // console.log("swapping", elementValue1, "with", elementValue2);
-    if ((elementValue1 == elementValue2))
-    {
-      console.log("Pivot and Value 1 are the same");
-      return true;
-    }
-
-    /*
-    barObjects[bar1]["color"] = 'rgb(255, 0, 0)';
-    barObjects[bar2]["color"] = 'rgb(0, 0, 255)';
-    */
-
   /** Animation setup for SORT-SWAP */ 
   } else if ((item.getAnimateType() === SORT_SWAP) || (item.getAnimateType() === HIGHLIGHT))
   {
-    // TTT
-    // console.log("SORT SWAP");
-    // console.log(item);
+
     elementValue1 = item.getValue1();
     elementValue2 = item.getValue2();
     pivotValue = item.getPivot();
@@ -342,21 +306,14 @@ function animateItem ()
     barObject2 = barList.getItemByValue(elementValue2);
     pivotObject = barList.getItemByValue(pivotValue);    
 
+    // Set colors for the bars
     barObject1.setColor("rgb(0, 0, 255)");
     barObject2.setColor("rgb(0, 0, 255)");
     pivotObject.setColor("rgb(255, 0, 0)");
 
-    if (item.getAnimateType() == SORT_SWAP)
-    {
-      console.log("swapping", elementValue1, "with", elementValue2);
-    }
-    /*
-    barObjects[pivot]["color"] = 'rgb(255, 0, 0)';
-    barObjects[bar1]["color"] = 'rgb(0, 0, 255)';    
-    barObjects[bar2]["color"] = 'rgb(0, 0, 255)';
-    */
   }
 
+  // INITIALIZE OFFSCREEN CANVAS
   // Draw static background to offscreen canvas if not already initialized
   if (initializedOff === false)
   {
@@ -365,6 +322,7 @@ function animateItem ()
 
     for (const barItem of barArray)
     {
+      // Draw all the bars, except for the two compared values and the pivot
       if (!((elementValue1 == barItem.getValue()) || (elementValue2 == barItem.getValue()) ||
             (pivotValue == barItem.getValue())))
       {
@@ -373,10 +331,10 @@ function animateItem ()
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(barItem.getOriginX(), 450 - barItem.getHeight(),
                                   BAR_WIDTH, barItem.getHeight());
-        
       }
     }
 
+    // Draw the bars within the range (in a darker color), except for the two compared values and the pivot
     for (let i = item.getStartIndex(); i <= item.getEndIndex(); i++)
     {
       let barItem = barArray[i];
@@ -388,11 +346,10 @@ function animateItem ()
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(barItem.getOriginX(), 450 - barItem.getHeight(),
                                   BAR_WIDTH, barItem.getHeight());
-        
       }  
-
     }
 
+    // If this is a sort swap or highlight case, then draw in the pivot bar
     if ((item.getAnimateType() === SORT_SWAP) || (item.getAnimateType() === HIGHLIGHT))
     {
       offCanvasContext.fillStyle = pivotObject.getColor();
@@ -413,24 +370,26 @@ function animateItem ()
       barList.swap(index1, index2);    
     }
 
+    // Set initialization of offscreen canvas to true (this will reset once this animation step is done)
     initializedOff = true;
   }
 
+  // Set highlight counter to 0
   if (highlightStart === false)
   {
     highlightTimer = 0;
     highlightStart = true;
   }
 
+  // Initialize the end values for the bars (for which they need to travel to)
   if (initEndValues === false)
   {
-    // Get original x position of our pbjects
     
-    // TTT
-    //console.log(barObject1);
+    // Get starting positions of our two bars
     originalBarPos1 = barObject1.getOriginX();
     originalBarPos2 = barObject2.getOriginX();
 
+    // Determine bar movement speed
     if (speedType == FIXED)
     {
       barSpeed = FIXED_SPEED;
@@ -439,13 +398,16 @@ function animateItem ()
       barSpeed = Math.abs(originalBarPos1 - originalBarPos2) / SWAP_VAL;
     }
 
+    // Reset end value initialization boolean
     initEndValues = true;
   }
 
+  // Move the bars
   if (item.getAnimateType() != HIGHLIGHT)
   {
+    // Update position of the two bars
 
-    // Draw pivot and value1 bars here
+    // CASE 1: Bar 1's position is more then Bar 2's
     if (originalBarPos1 > originalBarPos2)
     {
 
@@ -455,6 +417,7 @@ function animateItem ()
       if (barObject2.getOriginX() <  originalBarPos1)
       { barObject2.setOriginX(barObject2.getOriginX() + barSpeed); }
 
+      // Determine if the bars have reached their final destination
       if ((barObject1.getOriginX() <= originalBarPos2) &&
           (barObject2.getOriginX() >= originalBarPos1))
       {
@@ -462,28 +425,12 @@ function animateItem ()
         barObject1.setOriginX(originalBarPos2);
         barObject2.setOriginX(originalBarPos1);
 
-        /*
-        console.log(barObject1.getValue(), barObject1.getOriginX(), barObject1.getHeight());
-        console.log(barObject2.getValue(), barObject2.getOriginX(), barObject2.getHeight());
-
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-        context.drawImage(offscreenCanvas, 0, 0);
-  
-        context.fillStyle = barObject1.getColor();
-        context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
-                                  BAR_WIDTH, barObject1.getHeight());
-        context.fillStyle = barObject2.getColor();
-        context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
-                                  BAR_WIDTH, barObject2.getHeight());
-        */
         animateFinished = true;
-
-        // barObject1.setColor('rgb(255, 0, 255)');    
-        // barObject2.setColor('rgb(255, 0, 255)');
-        // pivotObject.setColor('rgb(255, 0, 255)');         
       }
 
     } else
+
+    // CASE 2: Bar 2's position is more then Bar 1's
     {
       if (barObject1.getOriginX() < originalBarPos2)
       { barObject1.setOriginX(barObject1.getOriginX() + barSpeed); }
@@ -491,90 +438,46 @@ function animateItem ()
       if (barObject2.getOriginX() > originalBarPos1)
       { barObject2.setOriginX(barObject2.getOriginX() - barSpeed); }
 
+      // Determine if the bars have reached their final destination
       if ((barObject1.getOriginX() >= originalBarPos2) &&
           (barObject2.getOriginX() <= originalBarPos1))
       {
+        // Assure the bars have the precise coordinates after animation is finished        
         barObject1.setOriginX(originalBarPos2);
         barObject2.setOriginX(originalBarPos1);
 
-        /*
-        console.log(barObject1.getValue(), barObject1.getOriginX(), barObject1.getHeight());
-        console.log(barObject2.getValue(), barObject2.getOriginX(), barObject2.getHeight());
-
-        context.clearRect(0, 0, canvasWidth, canvasHeight);
-        context.drawImage(offscreenCanvas, 0, 0);
-  
-        context.fillStyle = barObject1.getColor();
-        context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
-                                  BAR_WIDTH, barObject1.getHeight());
-        context.fillStyle = barObject2.getColor();
-        context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
-                                  BAR_WIDTH, barObject2.getHeight());
-        */
         animateFinished = true;
 
-        // barObject1.setColor('rgb(255, 0, 255)');    
-        // barObject2.setColor('rgb(255, 0, 255)');
-        // pivotObject.setColor('rgb(255, 0, 255)');          
       }
-      /*
-      // Copy contents of offscreen canvas to canvas
-      context.clearRect(0, 0, canvasWidth, canvasHeight);
-      context.drawImage(offscreenCanvas, 0, 0);
-
-      context.fillStyle = barObject1.getColor();
-      context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
-                                BAR_WIDTH, barObject1.getHeight());
-      context.fillStyle = barObject2.getColor();
-      context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
-                                BAR_WIDTH, barObject2.getHeight());
-      */
     }
 
-  // Copy contents of offscreen canvas to canvas
-  context.clearRect(0, 0, canvasWidth, canvasHeight);
-  context.drawImage(offscreenCanvas, 0, 0);
-
-  context.fillStyle = barObject1.getColor();
-  context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
-                            BAR_WIDTH, barObject1.getHeight());
-  context.fillStyle = barObject2.getColor();
-  context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
-                            BAR_WIDTH, barObject2.getHeight());  
   } else
   {
-    // Copy contents of offscreen canvas to canvas
-    context.clearRect(0, 0, canvasWidth, canvasHeight);
-    context.drawImage(offscreenCanvas, 0, 0);
-
-    context.fillStyle = barObject1.getColor();
-    context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
-                              BAR_WIDTH, barObject1.getHeight());
-    context.fillStyle = barObject2.getColor();
-    context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
-                              BAR_WIDTH, barObject2.getHeight());
 
     highlightTimer++;
 
     if (highlightTimer > HIGHLIGHT_LIMIT)
     {
       animateFinished = true;
-      // barObject1.setColor('rgb(255, 0, 255)');    
-      // barObject2.setColor('rgb(255, 0, 255)');
-      // pivotObject.setColor('rgb(255, 0, 255)');           
     }
-
   }
 
-  return animateFinished;
+  // Copy the offscreen canvas to the canvas
+  context.clearRect(0, 0, canvasWidth, canvasHeight);
+  context.drawImage(offscreenCanvas, 0, 0);
 
+  // Draw the two moving bars
+  context.fillStyle = barObject1.getColor();
+  context.fillRect(barObject1.getOriginX(), 450 - barObject1.getHeight(),
+                            BAR_WIDTH, barObject1.getHeight());
+  context.fillStyle = barObject2.getColor();
+  context.fillRect(barObject2.getOriginX(), 450 - barObject2.getHeight(),
+                            BAR_WIDTH, barObject2.getHeight());  
+  return animateFinished;
 }
 
 function startAnimation ()
 {
-  // console.log("startAnimation() method");
-  console.log("length:",listArray.length);
-  console.log(item);
   if(item == undefined)
   {
     if (listArray.length > 0)
@@ -582,7 +485,6 @@ function startAnimation ()
       item = listArray.shift();
     } else
     {
-      // console.log("playing is undefined");
       playing = false;
       return;
     }
@@ -592,7 +494,6 @@ function startAnimation ()
   {
     if (listArray.length > 0)
     {
-      console.log("get new item");
       item = listArray.shift();
       initializedOff = false;
       initEndValues = false;
@@ -600,21 +501,15 @@ function startAnimation ()
       highlightStart = false;
     } else
     {
-      // console.log("animateItem is true");
       playing = false;
-      // endItem = item;
-      // console.log(endItem);
       item = undefined;
     }
   }
 
   if(playing)
   {
-    // console.log("requestAnimationFrame in startAnimation()");
     requestAnimationFrame(startAnimation);
   }
-
-  // console.log("end of startAnimation()");
 }
 
 function main ()
@@ -634,29 +529,12 @@ function main ()
     numbers.splice(randomIndex, 1);
   }
   
-  console.log(ourArray);
-  // console.log(ourArray);
   barList = createBarList(ourArray, BAR_WIDTH);
  
   quickSort(ourArray);
-  console.log(ourArray);
-  console.log(barList);
-  console.log(listArray);
-  
-  // return;
-  // item = listArray.shift();
-  console.log(item);
+
   playing = true;
   requestAnimationFrame(startAnimation);
-
-  console.log(backupListArray);
-  // console.log(endItem);
-  // console.log(barList);
 }
 
 main()
-
-// let ourArray = [34, 12, 1, 6, 77, 18, 87, 22];
-// console.log(ourArray);
-// quickSort(ourArray);
-// console.log(ourArray);
