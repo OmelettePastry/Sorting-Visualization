@@ -8,40 +8,42 @@ const offCanvasWidth = offscreenCanvas.width = canvasWidth;
 const offCanvasHeight = offscreenCanvas.height = canvasHeight;
 const offCanvasContext = offscreenCanvas.getContext('2d');
 
+// Constants for determining animation type
 const SORT_SWAP = "sort-swap";
 const PIVOT_SWAP = "pivot-swap";
 const HIGHLIGHT = "highlight";
 
+// Bar movement speed
 const FIXED = "fixed-speed";
 const VARIABLE = "variable-speed";
 
+// Highlight counter limit (for determining how lond a highlight animation lasts)
 const HIGHLIGHT_LIMIT = 5;
 
+// Bar attributes
 const BAR_WIDTH = 5;
 const NUM_ITEMS = 100;
 const HEIGHT_MULT = 4;
 const SWAP_VAL = 10;    // Swap speed (distance divided by this number)
-const FIXED_SPEED = 20;  // Fied speed
+const FIXED_SPEED = 20;  // Fixed speed
 const BAR_SPACING = 4;
 
-// Note reset of values
+// (Note reset of values)
+
+// Globals
 let initializedOff = false;
 let initEndValues = false;
-let barSpeed;
 let animateFinished = false;
 let playing = false;
 let highlightStart = false;
-let endItem;    // debug
+// let endItem;    // debug
 let speedType = VARIABLE;
+let barSpeed;
 
-// Fix colors
+// (Fix colors)
 
 let listArray = [];
-let backupListArray = []; // Remove later
-let barObjects = {};    // Remove
-let barArray = [];      // Remove
-let barList;            // Modify - use of array outside object ? ?
-                        //   Leave as array, not object which contains an array ?
+let barList;
 let item;
 let originalBarPos1, originalBarPos2;
 let highlightTimer;
