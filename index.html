@@ -2,9 +2,33 @@
 <html lang="en-US">
   <head>
     <meta charset="utf-8">
+    <title>Sorting Visualization</title>
     <script src="script/script.js" defer></script>
+    <link rel="stylesheet" href="style/styles.css">
   </head>
   <body>
-    <canvas class="myCanvas" tabindex="1" width="1300" height="500"><p>Your browser doesn't support canvas.</p></canvas>
+    <h1 id="heading-one">Sorting Visualization</h1>
+    <canvas id="my-canvas" tabindex="1" width="1000" height="500"><p>Your browser doesn't support canvas.</p></canvas>
+    <p></p>
+    <div id="controls-group">
+      <div id="button-group">
+        <span>
+          <button id="new-array" type="button">New Array</button>
+          <button id="sort-array" type="button">Sort!</button>
+
+        </span>
+      </div>
+
+      <p></p>
+
+      <div id="animate-group">
+        <span>
+          <input type="checkbox" id="animate-or-no" checked>        
+          <label for="animate-or-no">Animate</label>
+          <span class="element-space"></span>        
+          <input type="range" id="animation-speed" min="1" max="25">Animation Speed</input>
+        </span>
+      </div>
+    </div>
   </body>  
 </html>

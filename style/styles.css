@@ -1,0 +1,35 @@
+body {
+  background: white;
+}
+
+#heading-one {
+  text-align: center;
+  font-family: 'Arial';
+  font-size: 32px;
+  background-color: lightgreen;
+  padding: 10px;
+}
+
+#controls-group {
+  background-color: lightblue;
+  padding: 15px;
+
+}
+#my-canvas {
+  padding: 0;
+  margin: auto;
+  display: block;
+  border: 2px solid black;
+}
+
+#button-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;  
+}
+
+#animate-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;  
+}
