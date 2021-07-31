@@ -23,10 +23,10 @@ BAR_SPACING = The spacing between each bar (pixels)
 
 */
 
-// Notes #A
+// NOTES #A
 // Animation as states of the array, with swap/comapare highlight
 
-/* Notes #B
+/* NOTES #B
 - Group all initilization code in one group
 */
 
@@ -61,9 +61,9 @@ const HIGHLIGHT = "highlight";
 const HIGHLIGHT_LIMIT = 0;
 
 // Bar attributes
-const BAR_WIDTH = 15;
-const NUM_ITEMS = 50;
-const HEIGHT_MULT = 8;
+const BAR_WIDTH = 10;
+const NUM_ITEMS = 75;
+const HEIGHT_MULT = 6;
 
 let SWAP_VAL = rangeInput.value;      // Swap speed (distance divided by this number)
 
@@ -268,7 +268,6 @@ function quickSortHelper (array, lo, hi)
 {
   let p = lo + randInt(0, hi - lo);
 
-  // console.log(p)
   if (hi > lo)
   {
     p = partition(array, lo, hi, p);
@@ -360,7 +359,7 @@ function animateItem ()
   if (item.getAnimateType() === PIVOT_SWAP)
   {
 
-    // 'elementValue1' represent the pivot
+    // 'elementValue1' represents the pivot
     elementValue1 = item.getPivot();
     elementValue2 = item.getValue1();
     pivotValue = elementValue1;
@@ -371,8 +370,8 @@ function animateItem ()
     pivotObject = barObject1;
 
     // Set colors for the bars
-    barObject1.setColor("rgb(255, 0, 0)");
-    barObject2.setColor("rgb(0, 0, 255)");
+    barObject1.setColor("rgb(255, 77, 148)");
+    barObject2.setColor("rgb(148, 77, 255)");
 
   /** Animation setup for SORT-SWAP */ 
   } else if ((item.getAnimateType() === SORT_SWAP) || (item.getAnimateType() === HIGHLIGHT))
@@ -387,9 +386,9 @@ function animateItem ()
     pivotObject = barList.getItemByValue(pivotValue);    
 
     // Set colors for the bars
-    barObject1.setColor("rgb(0, 0, 255)");
-    barObject2.setColor("rgb(0, 0, 255)");
-    pivotObject.setColor("rgb(255, 0, 0)");
+    barObject1.setColor("rgb(148, 77, 255)");
+    barObject2.setColor("rgb(148, 77, 255)");
+    pivotObject.setColor("rgb(255, 77, 148)");
 
   }
 
@@ -406,7 +405,7 @@ function animateItem ()
             (pivotValue == barItem.getValue())))
       {
 
-        barItem.setColor('rgb(228, 128, 228)');
+        barItem.setColor('rgb(174, 227, 234)');
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
                                   BAR_WIDTH, barItem.getHeight());
@@ -421,7 +420,7 @@ function animateItem ()
       if (!((elementValue1 == barItem.getValue()) || (elementValue2 == barItem.getValue()) ||
             (pivotValue == barItem.getValue())))
       {
-        barItem.setColor('rgb(228, 0, 228)');
+        barItem.setColor('rgb(0, 191, 207)');
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
                                   BAR_WIDTH, barItem.getHeight());
@@ -477,7 +476,6 @@ function animateItem ()
   // Move the bars
   if (item.getAnimateType() != HIGHLIGHT)
   {
-    // console.log(Date.now());
     // Update position of the two bars
 
     // CASE 1: Bar 1's position is more then Bar 2's
@@ -577,9 +575,6 @@ function startAnimation ()
   // If current animation step is finished
   if (animateItem())
   {
-
-    // console.log("item at start", item);
-
     if (listArray.length > 0)
     {
       item = listArray.shift();
@@ -616,14 +611,11 @@ function createNewArray()
 
   ourArray = getRandomArray(NUM_ITEMS);
 
-  // console.log(ourArray);
-
   barList = createBarList(ourArray, BAR_WIDTH);
   listArray = [];
   item = undefined;
   quickSort(ourArray);
 
-  // console.log(ourArray);
   sortingStarted = false;
 
   // Reset booleans and values
@@ -665,17 +657,13 @@ function getRandomArray (numItems)
 
 function generateBars ()
 {
-  // console.log("generate bars");
   barArray = barList.getArray();
 
   context.clearRect(0, 0, canvasWidth, canvasHeight);
 
   for (const barItem of barArray)
   {
-
-    // console.log(barItem);
-
-    barItem.setColor('rgb(228, 0, 228)');
+    barItem.setColor('rgb(63, 191, 207)');
     context.fillStyle = barItem.getColor();
     context.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
                               BAR_WIDTH, barItem.getHeight());
@@ -692,7 +680,6 @@ function startSort ()
 
     if (animateBars == true)
     {
-      // console.log(rangeInput.value);
       SWAP_VAL = 31 - rangeInput.value;
     } else {
       SWAP_VAL = 1;
@@ -707,7 +694,6 @@ function startSort ()
 function main ()
 {
   ourArray = getRandomArray(NUM_ITEMS);
-  // console.log(ourArray);
   
   barList = createBarList(ourArray, BAR_WIDTH);
  
