@@ -35,22 +35,22 @@ BAR_SPACING = The spacing between each bar (pixels)
 // 2. Make quotes consistent
 
 // Our canvas
-const canvas = document.querySelector('#my-canvas');
+const canvas = document.querySelector("#my-canvas");
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
-const context = canvas.getContext('2d');
+const context = canvas.getContext("2d");
 
 // The offscreen canvas
-const offscreenCanvas = document.createElement('canvas');
-const offCanvasWidth = offscreenCanvas.width = canvasWidth;
-const offCanvasHeight = offscreenCanvas.height = canvasHeight;
-const offCanvasContext = offscreenCanvas.getContext('2d');
+const offscreenCanvas = document.createElement("canvas");
+const offCanvasWidth = (offscreenCanvas.width = canvasWidth);
+const offCanvasHeight = (offscreenCanvas.height = canvasHeight);
+const offCanvasContext = offscreenCanvas.getContext("2d");
 
 // Other elements
-const newArrayButton = document.querySelector('#new-array');
-const startButton = document.querySelector('#sort-array');
-const animateCheckBox = document.querySelector('#animate-or-no');
-const rangeInput = document.querySelector('#animation-speed')
+const newArrayButton = document.querySelector("#new-array");
+const startButton = document.querySelector("#sort-array");
+const animateCheckBox = document.querySelector("#animate-or-no");
+const rangeInput = document.querySelector("#animation-speed");
 
 // Constants for determining animation type
 const SORT_SWAP = "sort-swap";
@@ -65,13 +65,13 @@ const BAR_WIDTH = 10;
 const NUM_ITEMS = 75;
 const HEIGHT_MULT = 6;
 
-let SWAP_VAL = rangeInput.value;      // Swap speed (distance divided by this number)
+let SWAP_VAL = rangeInput.value; // Swap speed (distance divided by this number)
 
-const FIXED_SPEED =1;   // Fixed speed
+const FIXED_SPEED = 1; // Fixed speed
 const BAR_SPACING = 4;
-const WAIT_LIMIT = 1;  // > 0
+const WAIT_LIMIT = 1; // > 0
 
-const barBottomPlacement = canvasHeight - 25
+const barBottomPlacement = canvasHeight - 25;
 
 // (Note reset of values)
 
@@ -95,34 +95,33 @@ let waitTimer = 0;
 let sortingStarted = false;
 
 // Add event listenerd
-newArrayButton.addEventListener('click', createNewArray);
-startButton.addEventListener('click', startSort);
+newArrayButton.addEventListener("click", createNewArray);
+startButton.addEventListener("click", startSort);
 
-animateCheckBox.addEventListener('change', function() {
+animateCheckBox.addEventListener("change", function () {
   if (this.checked) {
-    console.log('checked');
+    console.log("checked");
+    rangeInput.disabled = false;
     animateBars = true;
   } else {
+    rangeInput.disabled = true;
     animateBars = false;
   }
 });
 
-class AnimateObject
-{
-  constructor (animateType)
-  {
+class AnimateObject {
+  constructor(animateType) {
     this.animateType = animateType;
   }
 
-  getAnimateType ()
-  { return this.animateType; }  
+  getAnimateType() {
+    return this.animateType;
+  }
 }
 
 // Holds the data for a pivot animation (pivot swapping with the hi value)
-class AnimatePivot extends AnimateObject
-{
-  constructor (animateType, value1, pivot, startIndex, endIndex)
-  {
+class AnimatePivot extends AnimateObject {
+  constructor(animateType, value1, pivot, startIndex, endIndex) {
     super(animateType);
     this.value1 = value1;
     this.pivot = pivot;
@@ -130,145 +129,138 @@ class AnimatePivot extends AnimateObject
     this.endIndex = endIndex;
   }
 
-  getStartIndex ()
-  { return this.startIndex; }
+  getStartIndex() {
+    return this.startIndex;
+  }
 
-  getEndIndex ()
-  { return this.endIndex; }
+  getEndIndex() {
+    return this.endIndex;
+  }
 
-  getPivot ()
-  { return this.pivot; }
+  getPivot() {
+    return this.pivot;
+  }
 
-  getValue1 ()
-  { return this.value1; }
-
+  getValue1() {
+    return this.value1;
+  }
 }
 
 // Holds the data for a highlight or value swap
-class AnimateCompare extends AnimatePivot
-{
-  constructor (animateType, value1, value2, pivot, startIndex, endIndex)
-  {
+class AnimateCompare extends AnimatePivot {
+  constructor(animateType, value1, value2, pivot, startIndex, endIndex) {
     super(animateType, value1, pivot, startIndex, endIndex);
-    
+
     this.value2 = value2;
   }
 
-  getValue2 ()
-  { return this.value2; }
-
+  getValue2() {
+    return this.value2;
+  }
 }
 
 // Bar class to hold the bar graphics data
-class BarItem
-{
-  constructor (value, originX, height, color)
-  {
-    this.value = value
+class BarItem {
+  constructor(value, originX, height, color) {
+    this.value = value;
     this.originX = originX;
     this.height = height;
     this.color = color;
   }
 
-  getOriginX ()
-  { return this.originX; }
+  getOriginX() {
+    return this.originX;
+  }
 
-  getHeight ()
-  { return this.height; }
+  getHeight() {
+    return this.height;
+  }
 
-  getColor ()
-  { return this.color; }
+  getColor() {
+    return this.color;
+  }
 
-  getValue ()
-  { return this.value; }
+  getValue() {
+    return this.value;
+  }
 
-  setOriginX (originX)
-  { this.originX = originX; }
+  setOriginX(originX) {
+    this.originX = originX;
+  }
 
-  setColor (color)
-  { this.color = color; }
-
+  setColor(color) {
+    this.color = color;
+  }
 }
 
 // The class that contains an array to hold BarITem objects
-class BarList
-{
-  constructor ()
-  {
+class BarList {
+  constructor() {
     this.barList = [];
   }
 
-  getArray ()
-  { return this.barList; }
+  getArray() {
+    return this.barList;
+  }
 
-  getItemByValue (value)
-  {
+  getItemByValue(value) {
     let found = false;
     let counter = -1;
 
-    while (!found)
-    {
+    while (!found) {
       counter++;
 
-      if (value == this.barList[counter].getValue())
-      { found = true; }
+      if (value == this.barList[counter].getValue()) {
+        found = true;
+      }
     }
 
     return this.barList[counter];
   }
 
-  addItem (item)
-  {
+  addItem(item) {
     this.barList.push(item);
   }
 
-  getIndex (value)
-  {
+  getIndex(value) {
     let counter = -1;
     let found = false;
 
-    while (!found || (counter > this.barList.length - 1))
-    {
+    while (!found || counter > this.barList.length - 1) {
       counter++;
 
-      if (this.barList[counter].getValue() == value)
-      { found = true; }
+      if (this.barList[counter].getValue() == value) {
+        found = true;
+      }
     }
 
     return counter;
-    
   }
 
-  swap (index1, index2)
-  {
+  swap(index1, index2) {
     let temp = this.barList[index1];
     this.barList[index1] = this.barList[index2];
     this.barList[index2] = temp;
-  }  
-  
+  }
 }
 // Return a number bewteen min and max (exclusive)
-function randInt (min, max)
-{
+function randInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
 
 // Quicksort
-function quickSort (array)
-{
+function quickSort(array) {
   listArray = [];
-  quickSortHelper (array, 0, array.length - 1);
+  quickSortHelper(array, 0, array.length - 1);
 }
 
 // Quicksort helper function (recursion)
-function quickSortHelper (array, lo, hi)
-{
+function quickSortHelper(array, lo, hi) {
   let p = lo + randInt(0, hi - lo);
 
-  if (hi > lo)
-  {
+  if (hi > lo) {
     p = partition(array, lo, hi, p);
     quickSortHelper(array, lo, p - 1);
     quickSortHelper(array, p + 1, hi);
@@ -276,8 +268,7 @@ function quickSortHelper (array, lo, hi)
 }
 
 // Partition function
-function partition (array, lo, hi, r)
-{
+function partition(array, lo, hi, r) {
   /**
    * leftIndex:  index starting from the left
    * rightIndex: index starting from the right
@@ -286,7 +277,7 @@ function partition (array, lo, hi, r)
   let leftIndex, rightIndex, pivotValue;
 
   // Push animation object into the array first to get the original indexed values
-  listArray.push(new AnimatePivot(PIVOT_SWAP, array[hi], array[r], lo, hi))
+  listArray.push(new AnimatePivot(PIVOT_SWAP, array[hi], array[r], lo, hi));
 
   swap(array, r, hi);
 
@@ -294,38 +285,70 @@ function partition (array, lo, hi, r)
   leftIndex = lo;
   pivotValue = array[hi];
 
-  listArray.push(new AnimateCompare(HIGHLIGHT, array[leftIndex], array[rightIndex], pivotValue, lo, hi));
+  listArray.push(
+    new AnimateCompare(
+      HIGHLIGHT,
+      array[leftIndex],
+      array[rightIndex],
+      pivotValue,
+      lo,
+      hi
+    )
+  );
 
-  while (leftIndex <= rightIndex)
-  {
-    if (array[leftIndex] <= pivotValue)
-    {
+  while (leftIndex <= rightIndex) {
+    if (array[leftIndex] <= pivotValue) {
       leftIndex++;
-      listArray.push(new AnimateCompare(HIGHLIGHT, array[leftIndex], array[rightIndex], pivotValue, lo, hi));
-    } else
-    {
-      listArray.push(new AnimateCompare(SORT_SWAP, array[leftIndex], array[rightIndex], pivotValue, lo, hi));
+      listArray.push(
+        new AnimateCompare(
+          HIGHLIGHT,
+          array[leftIndex],
+          array[rightIndex],
+          pivotValue,
+          lo,
+          hi
+        )
+      );
+    } else {
+      listArray.push(
+        new AnimateCompare(
+          SORT_SWAP,
+          array[leftIndex],
+          array[rightIndex],
+          pivotValue,
+          lo,
+          hi
+        )
+      );
       swap(array, leftIndex, rightIndex);
       rightIndex--;
 
-      if (rightIndex > 0)
-      {
-        listArray.push(new AnimateCompare(HIGHLIGHT, array[leftIndex], array[rightIndex], pivotValue, lo, hi));
-
+      if (rightIndex > 0) {
+        listArray.push(
+          new AnimateCompare(
+            HIGHLIGHT,
+            array[leftIndex],
+            array[rightIndex],
+            pivotValue,
+            lo,
+            hi
+          )
+        );
       }
     }
   }
 
-  listArray.push(new AnimatePivot(PIVOT_SWAP, array[rightIndex + 1], array[hi], lo, hi));
+  listArray.push(
+    new AnimatePivot(PIVOT_SWAP, array[rightIndex + 1], array[hi], lo, hi)
+  );
 
   swap(array, hi, rightIndex + 1);
 
-  return (rightIndex + 1);
+  return rightIndex + 1;
 }
 
 // Swap elements in an array
-function swap (array, a, b)
-{
+function swap(array, a, b) {
   let temp = array[a];
 
   array[a] = array[b];
@@ -333,31 +356,34 @@ function swap (array, a, b)
 }
 
 // Create a bar list from an array of values
-function createBarList (array, width)
-{
-  let startX = Math.floor((canvasWidth - (array.length * (width + BAR_SPACING))) / 2);
+function createBarList(array, width) {
+  let startX = Math.floor(
+    (canvasWidth - array.length * (width + BAR_SPACING)) / 2
+  );
   let ourBarList = new BarList();
 
-  for (let i = 0; i < array.length; i++)
-  {
-    ourBarList.addItem(new BarItem(array[i], startX + (i * (width + BAR_SPACING)), array[i] * HEIGHT_MULT, "rgb(255, 0, 255)"));
+  for (let i = 0; i < array.length; i++) {
+    ourBarList.addItem(
+      new BarItem(
+        array[i],
+        startX + i * (width + BAR_SPACING),
+        array[i] * HEIGHT_MULT,
+        "rgb(255, 0, 255)"
+      )
+    );
   }
 
   return ourBarList;
 }
 
 // Animation method, called my requestAnimationFrame()
-function animateItem ()
-{
-
+function animateItem() {
   let elementValue1, elementValue2, pivotValue, barObject1, barObject2;
   animateFinished = false;
   let barArray = barList.getArray();
 
-  /** Animation setup for a Pivot Swap */  
-  if (item.getAnimateType() === PIVOT_SWAP)
-  {
-
+  /** Animation setup for a Pivot Swap */
+  if (item.getAnimateType() === PIVOT_SWAP) {
     // 'elementValue1' represents the pivot
     elementValue1 = item.getPivot();
     elementValue2 = item.getValue1();
@@ -372,76 +398,92 @@ function animateItem ()
     barObject1.setColor("rgb(255, 77, 148)");
     barObject2.setColor("rgb(148, 77, 255)");
 
-  /** Animation setup for SORT-SWAP */ 
-  } else if ((item.getAnimateType() === SORT_SWAP) || (item.getAnimateType() === HIGHLIGHT))
-  {
-
+    /** Animation setup for SORT-SWAP */
+  } else if (
+    item.getAnimateType() === SORT_SWAP ||
+    item.getAnimateType() === HIGHLIGHT
+  ) {
     elementValue1 = item.getValue1();
     elementValue2 = item.getValue2();
     pivotValue = item.getPivot();
 
     barObject1 = barList.getItemByValue(elementValue1);
     barObject2 = barList.getItemByValue(elementValue2);
-    pivotObject = barList.getItemByValue(pivotValue);    
+    pivotObject = barList.getItemByValue(pivotValue);
 
     // Set colors for the bars
     barObject1.setColor("rgb(148, 77, 255)");
     barObject2.setColor("rgb(148, 77, 255)");
     pivotObject.setColor("rgb(255, 77, 148)");
-
   }
 
   // INITIALIZE OFFSCREEN CANVAS
   // Draw static background to offscreen canvas if not already initialized
-  if (initializedOff === false)
-  {
+  if (initializedOff === false) {
     offCanvasContext.clearRect(0, 0, offCanvasWidth, offCanvasHeight);
 
-    for (const barItem of barArray)
-    {
+    for (const barItem of barArray) {
       // Draw all the bars, except for the two compared values and the pivot
-      if (!((elementValue1 == barItem.getValue()) || (elementValue2 == barItem.getValue()) ||
-            (pivotValue == barItem.getValue())))
-      {
-
-        barItem.setColor('rgb(174, 227, 234)');
+      if (
+        !(
+          elementValue1 == barItem.getValue() ||
+          elementValue2 == barItem.getValue() ||
+          pivotValue == barItem.getValue()
+        )
+      ) {
+        barItem.setColor("rgb(174, 227, 234)");
         offCanvasContext.fillStyle = barItem.getColor();
-        offCanvasContext.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
-                                  BAR_WIDTH, barItem.getHeight());
+        offCanvasContext.fillRect(
+          barItem.getOriginX(),
+          barBottomPlacement - barItem.getHeight(),
+          BAR_WIDTH,
+          barItem.getHeight()
+        );
       }
     }
 
     // Draw the bars within the range (in a darker color), except for the two compared values and the pivot
-    for (let i = item.getStartIndex(); i <= item.getEndIndex(); i++)
-    {
+    for (let i = item.getStartIndex(); i <= item.getEndIndex(); i++) {
       let barItem = barArray[i];
 
-      if (!((elementValue1 == barItem.getValue()) || (elementValue2 == barItem.getValue()) ||
-            (pivotValue == barItem.getValue())))
-      {
-        barItem.setColor('rgb(0, 191, 207)');
+      if (
+        !(
+          elementValue1 == barItem.getValue() ||
+          elementValue2 == barItem.getValue() ||
+          pivotValue == barItem.getValue()
+        )
+      ) {
+        barItem.setColor("rgb(0, 191, 207)");
         offCanvasContext.fillStyle = barItem.getColor();
-        offCanvasContext.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
-                                  BAR_WIDTH, barItem.getHeight());
+        offCanvasContext.fillRect(
+          barItem.getOriginX(),
+          barBottomPlacement - barItem.getHeight(),
+          BAR_WIDTH,
+          barItem.getHeight()
+        );
       }
     }
 
     // If this is a sort swap or highlight case, then draw in the pivot bar
-    if ((item.getAnimateType() === SORT_SWAP) || (item.getAnimateType() === HIGHLIGHT))
-    {
+    if (
+      item.getAnimateType() === SORT_SWAP ||
+      item.getAnimateType() === HIGHLIGHT
+    ) {
       offCanvasContext.fillStyle = pivotObject.getColor();
-      offCanvasContext.fillRect(pivotObject.getOriginX(), barBottomPlacement - pivotObject.getHeight(),
-                                BAR_WIDTH, pivotObject.getHeight());
+      offCanvasContext.fillRect(
+        pivotObject.getOriginX(),
+        barBottomPlacement - pivotObject.getHeight(),
+        BAR_WIDTH,
+        pivotObject.getHeight()
+      );
     }
 
     // Swap values in the array
-    if (item.getAnimateType() == PIVOT_SWAP)
-    {
+    if (item.getAnimateType() == PIVOT_SWAP) {
       let index1 = barList.getIndex(pivotValue);
       let index2 = barList.getIndex(elementValue2);
       barList.swap(index1, index2);
-    } else if (item.getAnimateType() == SORT_SWAP)
-    {
+    } else if (item.getAnimateType() == SORT_SWAP) {
       let index1 = barList.getIndex(elementValue1);
       let index2 = barList.getIndex(elementValue2);
       barList.swap(index1, index2);
@@ -452,19 +494,17 @@ function animateItem ()
   }
 
   // Set highlight counter to 0
-  if (highlightStart === false)
-  {
+  if (highlightStart === false) {
     highlightTimer = 0;
     highlightStart = true;
   }
 
   // Initialize the end values for the bars (for which they need to travel to)
-  if (initEndValues === false)
-  {
+  if (initEndValues === false) {
     // Get starting positions of our two bars
     originalBarPos1 = barObject1.getOriginX();
     originalBarPos2 = barObject2.getOriginX();
-    
+
     // Determine bar movement speed
     barSpeed = Math.abs(originalBarPos1 - originalBarPos2) / SWAP_VAL;
 
@@ -473,71 +513,66 @@ function animateItem ()
   }
 
   // Move the bars
-  if (item.getAnimateType() != HIGHLIGHT)
-  {
+  if (item.getAnimateType() != HIGHLIGHT) {
     // Update position of the two bars
 
     // CASE 1: Bar 1's position is more then Bar 2's
-    if (originalBarPos1 > originalBarPos2)
-    {
+    if (originalBarPos1 > originalBarPos2) {
+      if (barObject1.getOriginX() > originalBarPos2) {
+        barObject1.setOriginX(barObject1.getOriginX() - barSpeed);
+      }
 
-      if (barObject1.getOriginX() > originalBarPos2)
-      { barObject1.setOriginX(barObject1.getOriginX() - barSpeed); }
-
-      if (barObject2.getOriginX() <  originalBarPos1)
-      { barObject2.setOriginX(barObject2.getOriginX() + barSpeed); }
+      if (barObject2.getOriginX() < originalBarPos1) {
+        barObject2.setOriginX(barObject2.getOriginX() + barSpeed);
+      }
 
       // Determine if the bars have reached their final destination
-      if ((barObject1.getOriginX() <= originalBarPos2) &&
-          (barObject2.getOriginX() >= originalBarPos1))
-      {
+      if (
+        barObject1.getOriginX() <= originalBarPos2 &&
+        barObject2.getOriginX() >= originalBarPos1
+      ) {
         // Assure the bars have the precise coordinates after animation is finished
         barObject1.setOriginX(originalBarPos2);
         barObject2.setOriginX(originalBarPos1);
 
         waitTimer++;
 
-        if (waitTimer == waitTimer)
-        {
+        if (waitTimer == waitTimer) {
           animateFinished = true;
         }
       }
-
-    } else
+    }
 
     // CASE 2: Bar 2's position is more then Bar 1's
-    {
-      if (barObject1.getOriginX() < originalBarPos2)
-      { barObject1.setOriginX(barObject1.getOriginX() + barSpeed); }
+    else {
+      if (barObject1.getOriginX() < originalBarPos2) {
+        barObject1.setOriginX(barObject1.getOriginX() + barSpeed);
+      }
 
-      if (barObject2.getOriginX() > originalBarPos1)
-      { barObject2.setOriginX(barObject2.getOriginX() - barSpeed); }
+      if (barObject2.getOriginX() > originalBarPos1) {
+        barObject2.setOriginX(barObject2.getOriginX() - barSpeed);
+      }
 
       // Determine if the bars have reached their final destination
-      if ((barObject1.getOriginX() >= originalBarPos2) &&
-          (barObject2.getOriginX() <= originalBarPos1))
-      {
-        // Assure the bars have the precise coordinates after animation is finished        
+      if (
+        barObject1.getOriginX() >= originalBarPos2 &&
+        barObject2.getOriginX() <= originalBarPos1
+      ) {
+        // Assure the bars have the precise coordinates after animation is finished
         barObject1.setOriginX(originalBarPos2);
         barObject2.setOriginX(originalBarPos1);
 
         waitTimer++;
 
-        if (waitTimer == WAIT_LIMIT)
-        { 
+        if (waitTimer == WAIT_LIMIT) {
           animateFinished = true;
         }
-
       }
     }
-
-  } else
-  {
-
+  } else {
     highlightTimer++;
 
-    if (highlightTimer > HIGHLIGHT_LIMIT)
-    {
+    if (highlightTimer > HIGHLIGHT_LIMIT) {
       animateFinished = true;
     }
   }
@@ -548,34 +583,36 @@ function animateItem ()
 
   // Draw the two moving bars
   context.fillStyle = barObject1.getColor();
-  context.fillRect(barObject1.getOriginX(), barBottomPlacement - barObject1.getHeight(),
-                              BAR_WIDTH, barObject1.getHeight());
+  context.fillRect(
+    barObject1.getOriginX(),
+    barBottomPlacement - barObject1.getHeight(),
+    BAR_WIDTH,
+    barObject1.getHeight()
+  );
   context.fillStyle = barObject2.getColor();
-  context.fillRect(barObject2.getOriginX(), barBottomPlacement - barObject2.getHeight(),
-                              BAR_WIDTH, barObject2.getHeight());  
- 
+  context.fillRect(
+    barObject2.getOriginX(),
+    barBottomPlacement - barObject2.getHeight(),
+    BAR_WIDTH,
+    barObject2.getHeight()
+  );
+
   return animateFinished;
 }
 
-function startAnimation ()
-{
-  if(item == undefined)
-  {
-    if (listArray.length > 0)
-    {
+function startAnimation() {
+  if (item == undefined) {
+    if (listArray.length > 0) {
       item = listArray.shift();
-    } else
-    {
+    } else {
       playing = false;
       return;
     }
   }
 
   // If current animation step is finished
-  if (animateItem())
-  {
-    if (listArray.length > 0)
-    {
+  if (animateItem()) {
+    if (listArray.length > 0) {
       item = listArray.shift();
 
       // Reset booleans
@@ -583,8 +620,7 @@ function startAnimation ()
       initEndValues = false;
       highlightStart = false;
       waitTimer = 0;
-    } else
-    {
+    } else {
       playing = false;
       item = undefined;
 
@@ -594,17 +630,14 @@ function startAnimation ()
   }
 
   // Animation not done, more frames
-  if(playing)
-  {
+  if (playing) {
     animationID = requestAnimationFrame(startAnimation);
   }
 }
 
-function createNewArray()
-{
+function createNewArray() {
   // Cancel current animation if it exists
-  if (animationID != null)
-  {
+  if (animationID != null) {
     cancelAnimationFrame(animationID);
   }
 
@@ -622,30 +655,30 @@ function createNewArray()
   initializedOff = false;
   initEndValues = false;
   animateFinished = false;
-  highlightStart = false;  
+  highlightStart = false;
   waitTimer = 0;
 
   generateBars();
 
   // Enable animation inputs
-  animateCheckBox.removeAttribute('disabled');
-  rangeInput.disabled = false;
-
+  animateCheckBox.removeAttribute("disabled");
+  if (animateCheckBox.checked == true) {
+    rangeInput.disabled = false;
+  } else {
+    rangeInput.disabled = true;
+  }
 }
 
-function getRandomArray (numItems)
-{
+function getRandomArray(numItems) {
   numbers = [];
   ourArray = [];
 
   // Shuffle values from 1 to NUM_ITEMS in an array
-  for (let i = 1; i < numItems + 1; i ++)
-  {
+  for (let i = 1; i < numItems + 1; i++) {
     numbers.push(i);
   }
 
-  for (let i = 0; i < numItems; i++)
-  {
+  for (let i = 0; i < numItems; i++) {
     randomIndex = randInt(0, numbers.length);
     ourArray.push(numbers[randomIndex]);
     numbers.splice(randomIndex, 1);
@@ -654,31 +687,30 @@ function getRandomArray (numItems)
   return ourArray;
 }
 
-function generateBars ()
-{
+function generateBars() {
   barArray = barList.getArray();
 
   context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-  for (const barItem of barArray)
-  {
-    barItem.setColor('rgb(63, 191, 207)');
+  for (const barItem of barArray) {
+    barItem.setColor("rgb(63, 191, 207)");
     context.fillStyle = barItem.getColor();
-    context.fillRect(barItem.getOriginX(), barBottomPlacement - barItem.getHeight(),
-                              BAR_WIDTH, barItem.getHeight());
+    context.fillRect(
+      barItem.getOriginX(),
+      barBottomPlacement - barItem.getHeight(),
+      BAR_WIDTH,
+      barItem.getHeight()
+    );
   }
 }
 
-function startSort ()
-{
-  if (!sortingStarted)
-  {
+function startSort() {
+  if (!sortingStarted) {
     playing = true;
     sortingStarted = true;
-    animateCheckBox.setAttribute('disabled','disabled');
+    animateCheckBox.setAttribute("disabled", "disabled");
 
-    if (animateBars == true)
-    {
+    if (animateBars == true) {
       SWAP_VAL = 31 - rangeInput.value;
     } else {
       SWAP_VAL = 1;
@@ -690,19 +722,17 @@ function startSort ()
 }
 
 // Main method
-function main ()
-{
+function main() {
   ourArray = getRandomArray(NUM_ITEMS);
-  
+
   barList = createBarList(ourArray, BAR_WIDTH);
- 
+
   quickSort(ourArray);
 
   generateBars();
 
   // Set playing boolean to false
   playing = false;
-  
 }
 
-main()
+main();
