@@ -86,7 +86,6 @@ let animateBars = true;
 let animationID;
 
 // (Fix colors)
-
 let listArray = [];
 let barList;
 let item;
