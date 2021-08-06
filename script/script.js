@@ -56,6 +56,7 @@ const offCanvasContext = offscreenCanvas.getContext("2d");
 const newArrayButton = document.querySelector("#new-array");
 const startQuicksortButton = document.querySelector("#quicksort-array");
 const startBubblesortButton = document.querySelector("#bubblesort-array");
+const startHeapSortButton = document.querySelector("#heapsort-array");
 const animateCheckBox = document.querySelector("#animate-or-no");
 const rangeInput = document.querySelector("#animation-speed");
 
@@ -100,17 +101,19 @@ let animationID;
 // (Fix colors)
 let listArray = []; // Our list of actions for our animation
 let barList; // Our object containing the bar array
-let numberArray;
+let numberArray; // Our array to hold our values
+let heapArraySize;
 let item;
 let originalBarPos1, originalBarPos2;
 let highlightTimer;
 let waitTimer = 0;
-let sortingStarted = false;
+let sortingStarted = false; // true when sorting starts, reset to false when a new array is created
 
 // Add event listenerd
 newArrayButton.addEventListener("click", createNewArray);
 startQuicksortButton.addEventListener("click", startQuicksort);
 startBubblesortButton.addEventListener("click", startBubblesort);
+startHeapSortButton.addEventListener("click", startHeapsort);
 
 animateCheckBox.addEventListener("change", function () {
   if (this.checked) {
@@ -288,6 +291,128 @@ function randInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
+}
+
+function heapSort() {
+  let index = numberArray.length - 1;
+
+  // Initialize array size to max length
+  heapArraySize = numberArray.length;
+
+  while (index >= 0) {
+    siftDown(index);
+    index--;
+  }
+
+  console.log("heapify done");
+  console.log(numberArray);
+
+  for (let i = 0; i < numberArray.length; i++) {
+    listArray.push(
+      new AnimateCompare(
+        TWO_SORT_SWAP,
+        numberArray[numberArray.length - 1 - i],
+        numberArray[0],
+        0,
+        heapArraySize - 1
+      )
+    );
+    numberArray[numberArray.length - 1 - i] = popValue();
+    console.log(numberArray[numberArray.length - 1 - i]);
+  }
+}
+
+function popValue() {
+  let value;
+
+  if (heapArraySize > 0) {
+    value = numberArray[0];
+
+    if (heapArraySize > 1) {
+      numberArray[0] = numberArray[heapArraySize - 1];
+      heapArraySize--;
+      siftDown(0);
+    } else {
+      heapArraySize--;
+    }
+  }
+
+  return value;
+}
+
+function siftDown(index) {
+  let complete = false;
+  let zIndex = -1;
+
+  while (index < heapArraySize && complete == false) {
+    if (leftChildExist(index)) {
+      if (rightChildExist(index)) {
+        if (numberArray[leftChild(index)] > numberArray[rightChild(index)]) {
+          zIndex = leftChild(index);
+        } else {
+          zIndex = rightChild(index);
+        }
+        listArray.push(
+          new AnimateCompare(
+            TWO_HIGHLIGHT,
+            numberArray[leftChild(index)],
+            numberArray[rightChild(index)],
+            0,
+            heapArraySize - 1
+          )
+        );
+      } else {
+        zIndex = leftChild(index);
+      }
+
+      if (numberArray[zIndex] > numberArray[index]) {
+        listArray.push(
+          new AnimateCompare(
+            TWO_SORT_SWAP,
+            numberArray[zIndex],
+            numberArray[index],
+            0,
+            heapArraySize - 1
+          )
+        );
+
+        swap(numberArray, zIndex, index);
+        index = zIndex;
+      } else {
+        complete = true;
+      }
+    } else {
+      complete = true;
+    }
+  }
+}
+
+function leftChildExist(index) {
+  if (leftChild(index) > heapArraySize - 1) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function rightChildExist(index) {
+  if (rightChild(index) > heapArraySize - 1) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function parent(index) {
+  return Math.floor((index - 1) / 2);
+}
+
+function leftChild(index) {
+  return 2 * index + 1;
+}
+
+function rightChild(index) {
+  return 2 * index + 2;
 }
 
 function bubbleSort(array) {
@@ -746,6 +871,7 @@ function createNewArray() {
 
   barList = createBarList(BAR_WIDTH);
   listArray = [];
+  heapArraySize = numberArray.length;
   item = undefined;
 
   // bubbleSort(ourArray);
@@ -807,6 +933,23 @@ function generateBars() {
   }
 }
 
+function startHeapsort() {
+  if (!sortingStarted) {
+    heapSort(numberArray);
+    playing = true;
+    sortingStarted = true;
+    animateCheckBox.setAttribute("disabled", "disabled");
+
+    if (animateBars == true) {
+      SWAP_VAL = 31 - rangeInput.value;
+    } else {
+      SWAP_VAL = 1;
+    }
+
+    rangeInput.disabled = true;
+    requestAnimationFrame(startAnimation);
+  }
+}
 function startBubblesort() {
   if (!sortingStarted) {
     bubbleSort(numberArray);
@@ -867,6 +1010,14 @@ function main() {
   // console.log(listArray);
 
   generateBars();
+
+  /*
+  console.log(numberArray);
+
+  heapSort(numberArray);
+
+  console.log(numberArray);
+  */
 
   // Set playing boolean to false
   playing = false;

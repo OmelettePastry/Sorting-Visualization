@@ -10,15 +10,15 @@ body {
   border-bottom: 3px solid black;
 }
 
+#canvas-div {
+  display: flex;
+  justify-content: center;
+}
+
 #controls-group {
   background-color: lightblue;
   padding: 15px;
   border-top: 3px solid black;
-}
-
-#canvas-div {
-  display: flex;
-  justify-content: center;
 }
 
 #my-canvas {
@@ -63,5 +63,9 @@ body {
 }
 
 #bubblesort-array {
+  background-color: seagreen;
+}
+
+#heapsort-array {
   background-color: seagreen;
 }
