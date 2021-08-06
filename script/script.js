@@ -75,7 +75,7 @@ const HIGHLIGHT_LIMIT = 0;
 // Bar attributes
 const BAR_WIDTH = 14;
 const NUM_ITEMS = 50;
-const HEIGHT_MULT = 8;
+const HEIGHT_MULT = 10;
 
 let SWAP_VAL = rangeInput.value; // Swap speed (distance divided by this number)
 
@@ -83,7 +83,7 @@ const FIXED_SPEED = 1; // Fixed speed
 const BAR_SPACING = 4;
 const WAIT_LIMIT = 1; // > 0
 
-const barBottomPlacement = canvasHeight - 25;
+const barBottomPlacement = canvasHeight - 5; // How high off the bottom should the bars be
 
 // (Note reset of values)
 

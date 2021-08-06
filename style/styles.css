@@ -4,21 +4,31 @@ body {
 
 #heading-one {
   text-align: center;
-  font-family: "Arial";
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-size: 32px;
   background-color: lightgreen;
   padding: 20px;
+  border-bottom: 2px solid black;
 }
 
 #controls-group {
   background-color: lightblue;
   padding: 15px;
+  border-top: 2px solid black;
 }
+
+#canvas-div {
+  display: flex;
+  justify-content: center;
+}
+
 #my-canvas {
   padding: 0;
-  margin: auto;
-  display: block;
-  border: 2px solid black;
+  /* margin: auto; */
+  /* display: block; */
+  /* border-bottom: 5px solid black; */
+  /* border: 5px solid black; */
 }
 
 #button-group {
@@ -31,6 +41,10 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: navy;
 }
 
 .button-1 {
