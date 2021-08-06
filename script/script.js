@@ -34,6 +34,12 @@ BAR_SPACING = The spacing between each bar (pixels)
 // 1. Organize booleans
 // 2. Make quotes consistent
 
+// 3. Fix so that user can choose sorting algorithms
+// 4. Modify selection in createNewArray() and in main()
+// 5. Array generation/randomization, sorting using global variable?
+// 6. Single even listener for the sorting types button ?
+// 7. Clean up comments and logs
+
 // Our canvas
 const canvas = document.querySelector("#my-canvas");
 const canvasWidth = canvas.width;
@@ -48,22 +54,28 @@ const offCanvasContext = offscreenCanvas.getContext("2d");
 
 // Other elements
 const newArrayButton = document.querySelector("#new-array");
-const startButton = document.querySelector("#sort-array");
+const startQuicksortButton = document.querySelector("#quicksort-array");
+const startBubblesortButton = document.querySelector("#bubblesort-array");
 const animateCheckBox = document.querySelector("#animate-or-no");
 const rangeInput = document.querySelector("#animation-speed");
 
 // Constants for determining animation type
-const SORT_SWAP = "sort-swap";
-const PIVOT_SWAP = "pivot-swap";
-const HIGHLIGHT = "highlight";
+
+// QuickSort (pivot used)
+const PIVOT_SORT_SWAP = "pivot-sort-swap"; // Represents two-element swapping with a pivot
+const PIVOT_SWAP = "pivot-swap"; // Represents pivot swap
+const PIVOT_HIGHLIGHT = "pivot-highlight"; // Represents highlight of a comparison with pivot
+
+const TWO_SORT_SWAP = "two-sort-swap";
+const TWO_HIGHLIGHT = "two-highlight";
 
 // Highlight counter limit (for determining how lond a highlight animation lasts)
 const HIGHLIGHT_LIMIT = 0;
 
 // Bar attributes
-const BAR_WIDTH = 10;
-const NUM_ITEMS = 75;
-const HEIGHT_MULT = 6;
+const BAR_WIDTH = 14;
+const NUM_ITEMS = 50;
+const HEIGHT_MULT = 8;
 
 let SWAP_VAL = rangeInput.value; // Swap speed (distance divided by this number)
 
@@ -86,8 +98,9 @@ let animateBars = true;
 let animationID;
 
 // (Fix colors)
-let listArray = [];
-let barList;
+let listArray = []; // Our list of actions for our animation
+let barList; // Our object containing the bar array
+let numberArray;
 let item;
 let originalBarPos1, originalBarPos2;
 let highlightTimer;
@@ -96,7 +109,8 @@ let sortingStarted = false;
 
 // Add event listenerd
 newArrayButton.addEventListener("click", createNewArray);
-startButton.addEventListener("click", startSort);
+startQuicksortButton.addEventListener("click", startQuicksort);
+startBubblesortButton.addEventListener("click", startBubblesort);
 
 animateCheckBox.addEventListener("change", function () {
   if (this.checked) {
@@ -116,6 +130,32 @@ class AnimateObject {
 
   getAnimateType() {
     return this.animateType;
+  }
+}
+
+class AnimateCompare extends AnimateObject {
+  constructor(animateType, value1, value2, startIndex, endIndex) {
+    super(animateType);
+    this.value1 = value1;
+    this.value2 = value2;
+    this.startIndex = startIndex;
+    this.endIndex = endIndex;
+  }
+
+  getStartIndex() {
+    return this.startIndex;
+  }
+
+  getEndIndex() {
+    return this.endIndex;
+  }
+
+  getValue1() {
+    return this.value1;
+  }
+
+  getValue2() {
+    return this.value2;
   }
 }
 
@@ -147,7 +187,7 @@ class AnimatePivot extends AnimateObject {
 }
 
 // Holds the data for a highlight or value swap
-class AnimateCompare extends AnimatePivot {
+class AnimatePivotCompare extends AnimatePivot {
   constructor(animateType, value1, value2, pivot, startIndex, endIndex) {
     super(animateType, value1, pivot, startIndex, endIndex);
 
@@ -196,11 +236,11 @@ class BarItem {
 // The class that contains an array to hold BarITem objects
 class BarList {
   constructor() {
-    this.barList = [];
+    this.barArray = [];
   }
 
   getArray() {
-    return this.barList;
+    return this.barArray;
   }
 
   getItemByValue(value) {
@@ -210,26 +250,26 @@ class BarList {
     while (!found) {
       counter++;
 
-      if (value == this.barList[counter].getValue()) {
+      if (value == this.barArray[counter].getValue()) {
         found = true;
       }
     }
 
-    return this.barList[counter];
+    return this.barArray[counter];
   }
 
   addItem(item) {
-    this.barList.push(item);
+    this.barArray.push(item);
   }
 
   getIndex(value) {
     let counter = -1;
     let found = false;
 
-    while (!found || counter > this.barList.length - 1) {
+    while (!found || counter > this.barArray.length - 1) {
       counter++;
 
-      if (this.barList[counter].getValue() == value) {
+      if (this.barArray[counter].getValue() == value) {
         found = true;
       }
     }
@@ -238,9 +278,9 @@ class BarList {
   }
 
   swap(index1, index2) {
-    let temp = this.barList[index1];
-    this.barList[index1] = this.barList[index2];
-    this.barList[index2] = temp;
+    let temp = this.barArray[index1];
+    this.barArray[index1] = this.barArray[index2];
+    this.barArray[index2] = temp;
   }
 }
 // Return a number bewteen min and max (exclusive)
@@ -248,6 +288,45 @@ function randInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
+}
+
+function bubbleSort(array) {
+  listArray = [];
+  bubbleSortHelper(array);
+}
+
+function bubbleSortHelper(array) {
+  let arrayLength = array.length;
+  let temp;
+
+  for (let i = 0; i < arrayLength - 1; i++) {
+    for (let j = 0; j < arrayLength - 1 - i; j++) {
+      listArray.push(
+        new AnimateCompare(
+          TWO_HIGHLIGHT,
+          array[j],
+          array[j + 1],
+          0,
+          arrayLength - 1 - i
+        )
+      );
+
+      if (array[j] > array[j + 1]) {
+        listArray.push(
+          new AnimateCompare(
+            TWO_SORT_SWAP,
+            array[j],
+            array[j + 1],
+            0,
+            arrayLength - 1 - i
+          )
+        );
+        temp = array[j];
+        array[j] = array[j + 1];
+        array[j + 1] = temp;
+      }
+    }
+  }
 }
 
 // Quicksort
@@ -286,8 +365,8 @@ function partition(array, lo, hi, r) {
   pivotValue = array[hi];
 
   listArray.push(
-    new AnimateCompare(
-      HIGHLIGHT,
+    new AnimatePivotCompare(
+      PIVOT_HIGHLIGHT,
       array[leftIndex],
       array[rightIndex],
       pivotValue,
@@ -300,8 +379,8 @@ function partition(array, lo, hi, r) {
     if (array[leftIndex] <= pivotValue) {
       leftIndex++;
       listArray.push(
-        new AnimateCompare(
-          HIGHLIGHT,
+        new AnimatePivotCompare(
+          PIVOT_HIGHLIGHT,
           array[leftIndex],
           array[rightIndex],
           pivotValue,
@@ -311,8 +390,8 @@ function partition(array, lo, hi, r) {
       );
     } else {
       listArray.push(
-        new AnimateCompare(
-          SORT_SWAP,
+        new AnimatePivotCompare(
+          PIVOT_SORT_SWAP,
           array[leftIndex],
           array[rightIndex],
           pivotValue,
@@ -325,8 +404,8 @@ function partition(array, lo, hi, r) {
 
       if (rightIndex > 0) {
         listArray.push(
-          new AnimateCompare(
-            HIGHLIGHT,
+          new AnimatePivotCompare(
+            PIVOT_HIGHLIGHT,
             array[leftIndex],
             array[rightIndex],
             pivotValue,
@@ -356,18 +435,18 @@ function swap(array, a, b) {
 }
 
 // Create a bar list from an array of values
-function createBarList(array, width) {
+function createBarList(width) {
   let startX = Math.floor(
-    (canvasWidth - array.length * (width + BAR_SPACING)) / 2
+    (canvasWidth - numberArray.length * (width + BAR_SPACING)) / 2
   );
   let ourBarList = new BarList();
 
-  for (let i = 0; i < array.length; i++) {
+  for (let i = 0; i < numberArray.length; i++) {
     ourBarList.addItem(
       new BarItem(
-        array[i],
+        numberArray[i],
         startX + i * (width + BAR_SPACING),
-        array[i] * HEIGHT_MULT,
+        numberArray[i] * HEIGHT_MULT,
         "rgb(255, 0, 255)"
       )
     );
@@ -380,7 +459,7 @@ function createBarList(array, width) {
 function animateItem() {
   let elementValue1, elementValue2, pivotValue, barObject1, barObject2;
   animateFinished = false;
-  let barArray = barList.getArray();
+  let ourBarArray = barList.getArray();
 
   /** Animation setup for a Pivot Swap */
   if (item.getAnimateType() === PIVOT_SWAP) {
@@ -400,8 +479,8 @@ function animateItem() {
 
     /** Animation setup for SORT-SWAP */
   } else if (
-    item.getAnimateType() === SORT_SWAP ||
-    item.getAnimateType() === HIGHLIGHT
+    item.getAnimateType() === PIVOT_SORT_SWAP ||
+    item.getAnimateType() === PIVOT_HIGHLIGHT
   ) {
     elementValue1 = item.getValue1();
     elementValue2 = item.getValue2();
@@ -415,14 +494,30 @@ function animateItem() {
     barObject1.setColor("rgb(148, 77, 255)");
     barObject2.setColor("rgb(148, 77, 255)");
     pivotObject.setColor("rgb(255, 77, 148)");
+
+    /** Animation setup for a two-element (no pivot) swap */
+  } else if (
+    item.getAnimateType() === TWO_SORT_SWAP ||
+    item.getAnimateType() === TWO_HIGHLIGHT
+  ) {
+    elementValue1 = item.getValue1();
+    elementValue2 = item.getValue2();
+
+    barObject1 = barList.getItemByValue(elementValue1);
+    barObject2 = barList.getItemByValue(elementValue2);
+
+    barObject1.setColor("rgb(148, 77, 255)");
+    barObject2.setColor("rgb(148, 77, 255)");
   }
+
+  console.log(barObject1, barObject2);
 
   // INITIALIZE OFFSCREEN CANVAS
   // Draw static background to offscreen canvas if not already initialized
   if (initializedOff === false) {
     offCanvasContext.clearRect(0, 0, offCanvasWidth, offCanvasHeight);
 
-    for (const barItem of barArray) {
+    for (const barItem of ourBarArray) {
       // Draw all the bars, except for the two compared values and the pivot
       if (
         !(
@@ -444,7 +539,7 @@ function animateItem() {
 
     // Draw the bars within the range (in a darker color), except for the two compared values and the pivot
     for (let i = item.getStartIndex(); i <= item.getEndIndex(); i++) {
-      let barItem = barArray[i];
+      let barItem = ourBarArray[i];
 
       if (
         !(
@@ -466,8 +561,8 @@ function animateItem() {
 
     // If this is a sort swap or highlight case, then draw in the pivot bar
     if (
-      item.getAnimateType() === SORT_SWAP ||
-      item.getAnimateType() === HIGHLIGHT
+      item.getAnimateType() === PIVOT_SORT_SWAP ||
+      item.getAnimateType() === PIVOT_HIGHLIGHT
     ) {
       offCanvasContext.fillStyle = pivotObject.getColor();
       offCanvasContext.fillRect(
@@ -483,7 +578,10 @@ function animateItem() {
       let index1 = barList.getIndex(pivotValue);
       let index2 = barList.getIndex(elementValue2);
       barList.swap(index1, index2);
-    } else if (item.getAnimateType() == SORT_SWAP) {
+    } else if (
+      item.getAnimateType() == PIVOT_SORT_SWAP ||
+      item.getAnimateType() == TWO_SORT_SWAP
+    ) {
       let index1 = barList.getIndex(elementValue1);
       let index2 = barList.getIndex(elementValue2);
       barList.swap(index1, index2);
@@ -513,7 +611,10 @@ function animateItem() {
   }
 
   // Move the bars
-  if (item.getAnimateType() != HIGHLIGHT) {
+  if (
+    item.getAnimateType() != PIVOT_HIGHLIGHT &&
+    item.getAnimateType() != TWO_HIGHLIGHT
+  ) {
     // Update position of the two bars
 
     // CASE 1: Bar 1's position is more then Bar 2's
@@ -641,12 +742,14 @@ function createNewArray() {
     cancelAnimationFrame(animationID);
   }
 
-  ourArray = getRandomArray(NUM_ITEMS);
+  numberArray = getRandomArray(NUM_ITEMS);
 
-  barList = createBarList(ourArray, BAR_WIDTH);
+  barList = createBarList(BAR_WIDTH);
   listArray = [];
   item = undefined;
-  quickSort(ourArray);
+
+  // bubbleSort(ourArray);
+  // quickSort(ourArray);
 
   sortingStarted = false;
 
@@ -688,11 +791,11 @@ function getRandomArray(numItems) {
 }
 
 function generateBars() {
-  barArray = barList.getArray();
+  ourBarArray = barList.getArray();
 
   context.clearRect(0, 0, canvasWidth, canvasHeight);
 
-  for (const barItem of barArray) {
+  for (const barItem of ourBarArray) {
     barItem.setColor("rgb(63, 191, 207)");
     context.fillStyle = barItem.getColor();
     context.fillRect(
@@ -704,7 +807,28 @@ function generateBars() {
   }
 }
 
-function startSort() {
+function startBubblesort() {
+  bubbleSort(numberArray);
+
+  if (!sortingStarted) {
+    playing = true;
+    sortingStarted = true;
+    animateCheckBox.setAttribute("disabled", "disabled");
+
+    if (animateBars == true) {
+      SWAP_VAL = 31 - rangeInput.value;
+    } else {
+      SWAP_VAL = 1;
+    }
+
+    rangeInput.disabled = true;
+    requestAnimationFrame(startAnimation);
+  }
+}
+
+function startQuicksort() {
+  quickSort(numberArray);
+
   if (!sortingStarted) {
     playing = true;
     sortingStarted = true;
@@ -723,16 +847,29 @@ function startSort() {
 
 // Main method
 function main() {
-  ourArray = getRandomArray(NUM_ITEMS);
+  // Array generation/randomization, sorting using global variable?
+  numberArray = getRandomArray(NUM_ITEMS);
 
-  barList = createBarList(ourArray, BAR_WIDTH);
+  barList = createBarList(BAR_WIDTH);
 
-  quickSort(ourArray);
+  // quickSort(ourArray);
+  // bubbleSort(ourArray);
+  // console.log(ourArray);
+  // console.log(listArray);
 
   generateBars();
 
   // Set playing boolean to false
   playing = false;
+
+  // Testing - bubble sort
+
+  /**
+  let ourBubbleArray = getRandomArray(20);
+  console.log(ourBubbleArray);
+  bubbleSort(ourBubbleArray);
+  console.log(ourBubbleArray);
+  */
 }
 
 main();
