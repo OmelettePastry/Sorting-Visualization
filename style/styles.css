@@ -46,8 +46,9 @@ body {
 }
 
 .button-1 {
-  margin-left: 5px;
-  width: 90;
+  margin-left: 6px;
+  margin-right: 6px;
+  width: 90px;
   color: white;
   padding: 8px;
   border: none;
@@ -56,16 +57,20 @@ body {
 
 #new-array {
   background-color: cornflowerblue;
+  border: 2px solid blue;
 }
 
 #quicksort-array {
   background-color: seagreen;
+  border: 2px solid darkgreen;
 }
 
 #bubblesort-array {
   background-color: seagreen;
+  border: 2px solid darkgreen;
 }
 
 #heapsort-array {
   background-color: seagreen;
+  border: 2px solid darkgreen;
 }
