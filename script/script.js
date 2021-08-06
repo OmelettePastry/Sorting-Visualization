@@ -94,7 +94,7 @@ let animateFinished = true;
 let playing = false;
 let highlightStart = false;
 let barSpeed;
-let animateBars = true;
+let animateBars;
 let animationID;
 
 // (Fix colors)
@@ -845,8 +845,19 @@ function startQuicksort() {
   }
 }
 
+function initBarAnimation() {
+  if (animateCheckBox.checked) {
+    console.log("checked");
+    rangeInput.disabled = false;
+    animateBars = true;
+  } else {
+    rangeInput.disabled = true;
+    animateBars = false;
+  }
+}
 // Main method
 function main() {
+  initBarAnimation();
   // Array generation/randomization, sorting using global variable?
   numberArray = getRandomArray(NUM_ITEMS);
 
