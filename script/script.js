@@ -114,7 +114,7 @@ startBubblesortButton.addEventListener("click", startBubblesort);
 
 animateCheckBox.addEventListener("change", function () {
   if (this.checked) {
-    console.log("checked");
+    // console.log("checked");
     rangeInput.disabled = false;
     animateBars = true;
   } else {
@@ -510,7 +510,7 @@ function animateItem() {
     barObject2.setColor("rgb(148, 77, 255)");
   }
 
-  console.log(barObject1, barObject2);
+  // console.log(barObject1, barObject2);
 
   // INITIALIZE OFFSCREEN CANVAS
   // Draw static background to offscreen canvas if not already initialized
@@ -808,9 +808,8 @@ function generateBars() {
 }
 
 function startBubblesort() {
-  bubbleSort(numberArray);
-
   if (!sortingStarted) {
+    bubbleSort(numberArray);
     playing = true;
     sortingStarted = true;
     animateCheckBox.setAttribute("disabled", "disabled");
@@ -827,9 +826,8 @@ function startBubblesort() {
 }
 
 function startQuicksort() {
-  quickSort(numberArray);
-
   if (!sortingStarted) {
+    quickSort(numberArray);
     playing = true;
     sortingStarted = true;
     animateCheckBox.setAttribute("disabled", "disabled");
@@ -847,7 +845,7 @@ function startQuicksort() {
 
 function initBarAnimation() {
   if (animateCheckBox.checked) {
-    console.log("checked");
+    // console.log("checked");
     rangeInput.disabled = false;
     animateBars = true;
   } else {
