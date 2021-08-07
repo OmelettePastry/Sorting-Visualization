@@ -39,6 +39,8 @@ BAR_SPACING = The spacing between each bar (pixels)
 // 5. Array generation/randomization, sorting using global variable?
 // 6. Single even listener for the sorting types button ?
 // 7. Clean up comments and logs
+// 8. Sorting buttons
+// 9. Sorting buttons - add function to even listener to call start sort function with appropriate arguments
 
 // Our canvas
 const canvas = document.querySelector("#my-canvas");
@@ -876,6 +878,8 @@ function createNewArray() {
     cancelAnimationFrame(animationID);
   }
 
+  enableSortButtons();
+  ungreyButtons();
   algorithmText.style.color = "black";
   algorithmText.style.fontWeight = "300";
   algorithmText.textContent = "Sorting Algorithm";
@@ -947,6 +951,8 @@ function generateBars() {
 
 function startHeapsort() {
   if (!sortingStarted) {
+    disableSortButtons();
+    greyButtons();
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Heapsort";
@@ -967,6 +973,8 @@ function startHeapsort() {
 }
 function startBubblesort() {
   if (!sortingStarted) {
+    disableSortButtons();
+    greyButtons();
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Bubble Sort";
@@ -986,8 +994,28 @@ function startBubblesort() {
   }
 }
 
+function greyButtons() {
+  startBubblesortButton.style.background = "rgb(159, 207, 159)";
+  startBubblesortButton.style.borderColor = "rgb(191, 239, 191)";
+  startHeapSortButton.style.background = "rgb(159, 207, 159)";
+  startHeapSortButton.style.borderColor = "rgb(191, 239, 191)";
+  startQuicksortButton.style.background = "rgb(159, 207, 159)";
+  startQuicksortButton.style.borderColor = "rgb(191, 239, 191)";
+}
+
+function ungreyButtons() {
+  startBubblesortButton.style.background = "seagreen";
+  startBubblesortButton.style.borderColor = "darkgreen";
+  startHeapSortButton.style.background = "seagreen";
+  startHeapSortButton.style.borderColor = "darkgreen";
+  startQuicksortButton.style.background = "seagreen";
+  startQuicksortButton.style.borderColor = "darkgreen";
+}
+
 function startQuicksort() {
   if (!sortingStarted) {
+    disableSortButtons();
+    greyButtons();
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Quicksort";
@@ -1005,6 +1033,18 @@ function startQuicksort() {
     rangeInput.disabled = true;
     requestAnimationFrame(startAnimation);
   }
+}
+
+function disableSortButtons() {
+  startBubblesortButton.disabled = true;
+  startHeapSortButton.disabled = true;
+  startQuicksortButton.disabled = true;
+}
+
+function enableSortButtons() {
+  startBubblesortButton.disabled = false;
+  startHeapSortButton.disabled = false;
+  startQuicksortButton.disabled = false;
 }
 
 function initBarAnimation() {
