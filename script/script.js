@@ -59,6 +59,7 @@ const startBubblesortButton = document.querySelector("#bubblesort-array");
 const startHeapSortButton = document.querySelector("#heapsort-array");
 const animateCheckBox = document.querySelector("#animate-or-no");
 const rangeInput = document.querySelector("#animation-speed");
+const algorithmText = document.querySelector("#algorithm-text");
 
 // Constants for determining animation type
 
@@ -867,6 +868,9 @@ function createNewArray() {
     cancelAnimationFrame(animationID);
   }
 
+  algorithmText.style.color = "black";
+  algorithmText.style.fontWeight = "300";
+  algorithmText.textContent = "Sorting Algorithm";
   numberArray = getRandomArray(NUM_ITEMS);
 
   barList = createBarList(BAR_WIDTH);
@@ -935,6 +939,9 @@ function generateBars() {
 
 function startHeapsort() {
   if (!sortingStarted) {
+    algorithmText.style.color = "darkgreen";
+    algorithmText.style.fontWeight = "bold";
+    algorithmText.textContent = "Heapsort";
     heapSort(numberArray);
     playing = true;
     sortingStarted = true;
@@ -952,6 +959,9 @@ function startHeapsort() {
 }
 function startBubblesort() {
   if (!sortingStarted) {
+    algorithmText.style.color = "darkgreen";
+    algorithmText.style.fontWeight = "bold";
+    algorithmText.textContent = "Bubble Sort";
     bubbleSort(numberArray);
     playing = true;
     sortingStarted = true;
@@ -970,6 +980,9 @@ function startBubblesort() {
 
 function startQuicksort() {
   if (!sortingStarted) {
+    algorithmText.style.color = "darkgreen";
+    algorithmText.style.fontWeight = "bold";
+    algorithmText.textContent = "Quicksort";
     quickSort(numberArray);
     playing = true;
     sortingStarted = true;
