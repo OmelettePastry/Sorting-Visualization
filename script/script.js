@@ -305,8 +305,8 @@ function heapSort() {
     index--;
   }
 
-  console.log("heapify done");
-  console.log(numberArray);
+  // console.log("heapify done");
+  // console.log(numberArray);
 
   for (let i = 0; i < numberArray.length; i++) {
     listArray.push(
@@ -416,13 +416,13 @@ function rightChild(index) {
   return 2 * index + 2;
 }
 
-function bubbleSort(array) {
+function bubbleSort() {
   listArray = [];
-  bubbleSortHelper(array);
+  bubbleSortHelper();
 }
 
-function bubbleSortHelper(array) {
-  let arrayLength = array.length;
+function bubbleSortHelper() {
+  let arrayLength = numberArray.length;
   let temp;
 
   for (let i = 0; i < arrayLength - 1; i++) {
@@ -430,50 +430,50 @@ function bubbleSortHelper(array) {
       listArray.push(
         new AnimateCompare(
           TWO_HIGHLIGHT,
-          array[j],
-          array[j + 1],
+          numberArray[j],
+          numberArray[j + 1],
           0,
           arrayLength - 1 - i
         )
       );
 
-      if (array[j] > array[j + 1]) {
+      if (numberArray[j] > numberArray[j + 1]) {
         listArray.push(
           new AnimateCompare(
             TWO_SORT_SWAP,
-            array[j],
-            array[j + 1],
+            numberArray[j],
+            numberArray[j + 1],
             0,
             arrayLength - 1 - i
           )
         );
-        temp = array[j];
-        array[j] = array[j + 1];
-        array[j + 1] = temp;
+        temp = numberArray[j];
+        numberArray[j] = numberArray[j + 1];
+        numberArray[j + 1] = temp;
       }
     }
   }
 }
 
 // Quicksort
-function quickSort(array) {
+function quickSort() {
   listArray = [];
-  quickSortHelper(array, 0, array.length - 1);
+  quickSortHelper(0, numberArray.length - 1);
 }
 
 // Quicksort helper function (recursion)
-function quickSortHelper(array, lo, hi) {
+function quickSortHelper(lo, hi) {
   let p = lo + randInt(0, hi - lo);
 
   if (hi > lo) {
-    p = partition(array, lo, hi, p);
-    quickSortHelper(array, lo, p - 1);
-    quickSortHelper(array, p + 1, hi);
+    p = partition(lo, hi, p);
+    quickSortHelper(lo, p - 1);
+    quickSortHelper(p + 1, hi);
   }
 }
 
 // Partition function
-function partition(array, lo, hi, r) {
+function partition(lo, hi, r) {
   /**
    * leftIndex:  index starting from the left
    * rightIndex: index starting from the right
@@ -482,19 +482,21 @@ function partition(array, lo, hi, r) {
   let leftIndex, rightIndex, pivotValue;
 
   // Push animation object into the array first to get the original indexed values
-  listArray.push(new AnimatePivot(PIVOT_SWAP, array[hi], array[r], lo, hi));
+  listArray.push(
+    new AnimatePivot(PIVOT_SWAP, numberArray[hi], numberArray[r], lo, hi)
+  );
 
-  swap(array, r, hi);
+  swap(numberArray, r, hi);
 
   rightIndex = hi - 1;
   leftIndex = lo;
-  pivotValue = array[hi];
+  pivotValue = numberArray[hi];
 
   listArray.push(
     new AnimatePivotCompare(
       PIVOT_HIGHLIGHT,
-      array[leftIndex],
-      array[rightIndex],
+      numberArray[leftIndex],
+      numberArray[rightIndex],
       pivotValue,
       lo,
       hi
@@ -502,13 +504,13 @@ function partition(array, lo, hi, r) {
   );
 
   while (leftIndex <= rightIndex) {
-    if (array[leftIndex] <= pivotValue) {
+    if (numberArray[leftIndex] <= pivotValue) {
       leftIndex++;
       listArray.push(
         new AnimatePivotCompare(
           PIVOT_HIGHLIGHT,
-          array[leftIndex],
-          array[rightIndex],
+          numberArray[leftIndex],
+          numberArray[rightIndex],
           pivotValue,
           lo,
           hi
@@ -518,22 +520,22 @@ function partition(array, lo, hi, r) {
       listArray.push(
         new AnimatePivotCompare(
           PIVOT_SORT_SWAP,
-          array[leftIndex],
-          array[rightIndex],
+          numberArray[leftIndex],
+          numberArray[rightIndex],
           pivotValue,
           lo,
           hi
         )
       );
-      swap(array, leftIndex, rightIndex);
+      swap(numberArray, leftIndex, rightIndex);
       rightIndex--;
 
       if (rightIndex > 0) {
         listArray.push(
           new AnimatePivotCompare(
             PIVOT_HIGHLIGHT,
-            array[leftIndex],
-            array[rightIndex],
+            numberArray[leftIndex],
+            numberArray[rightIndex],
             pivotValue,
             lo,
             hi
@@ -544,10 +546,16 @@ function partition(array, lo, hi, r) {
   }
 
   listArray.push(
-    new AnimatePivot(PIVOT_SWAP, array[rightIndex + 1], array[hi], lo, hi)
+    new AnimatePivot(
+      PIVOT_SWAP,
+      numberArray[rightIndex + 1],
+      numberArray[hi],
+      lo,
+      hi
+    )
   );
 
-  swap(array, hi, rightIndex + 1);
+  swap(numberArray, hi, rightIndex + 1);
 
   return rightIndex + 1;
 }
@@ -942,7 +950,7 @@ function startHeapsort() {
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Heapsort";
-    heapSort(numberArray);
+    heapSort();
     playing = true;
     sortingStarted = true;
     animateCheckBox.setAttribute("disabled", "disabled");
@@ -962,7 +970,7 @@ function startBubblesort() {
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Bubble Sort";
-    bubbleSort(numberArray);
+    bubbleSort();
     playing = true;
     sortingStarted = true;
     animateCheckBox.setAttribute("disabled", "disabled");
@@ -983,7 +991,7 @@ function startQuicksort() {
     algorithmText.style.color = "darkgreen";
     algorithmText.style.fontWeight = "bold";
     algorithmText.textContent = "Quicksort";
-    quickSort(numberArray);
+    quickSort();
     playing = true;
     sortingStarted = true;
     animateCheckBox.setAttribute("disabled", "disabled");
