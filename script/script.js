@@ -85,7 +85,9 @@ let SWAP_VAL = rangeInput.value; // Swap speed (distance divided by this number)
 
 const FIXED_SPEED = 1; // Fixed speed
 const BAR_SPACING = 4;
-const WAIT_LIMIT = 1; // > 0
+
+// Wait some time, as animate checkbox is initially unchecked
+const WAIT_LIMIT = 2; // > 0
 
 const barBottomPlacement = canvasHeight - 5; // How high off the bottom should the bars be
 
@@ -123,9 +125,11 @@ animateCheckBox.addEventListener("change", function () {
     // console.log("checked");
     rangeInput.disabled = false;
     animateBars = true;
+    WAIT_LIMIT = 1;
   } else {
     rangeInput.disabled = true;
     animateBars = false;
+    WAIT_LIMIT = 2;
   }
 });
 
@@ -774,7 +778,7 @@ function animateItem() {
 
         waitTimer++;
 
-        if (waitTimer == waitTimer) {
+        if (waitTimer == WAIT_LIMIT) {
           animateFinished = true;
         }
       }
@@ -882,7 +886,7 @@ function createNewArray() {
   ungreyButtons();
   algorithmText.style.color = "black";
   algorithmText.style.fontWeight = "300";
-  algorithmText.textContent = "Sorting Algorithm";
+  algorithmText.textContent = "Algorithms";
   numberArray = getRandomArray(NUM_ITEMS);
 
   barList = createBarList(BAR_WIDTH);
