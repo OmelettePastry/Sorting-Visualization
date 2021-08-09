@@ -610,7 +610,7 @@ function animateItem() {
 
     // Set colors for the bars
     barObject1.setColor("rgb(255, 77, 148)");
-    barObject2.setColor("rgb(148, 77, 255)");
+    barObject2.setColor("rgb(67, 97, 255)");
 
     /** Animation setup for SORT-SWAP */
   } else if (
@@ -626,8 +626,8 @@ function animateItem() {
     pivotObject = barList.getItemByValue(pivotValue);
 
     // Set colors for the bars
-    barObject1.setColor("rgb(148, 77, 255)");
-    barObject2.setColor("rgb(148, 77, 255)");
+    barObject1.setColor("rgb(67, 77, 255)");
+    barObject2.setColor("rgb(67, 77, 255)");
     pivotObject.setColor("rgb(255, 77, 148)");
 
     /** Animation setup for a two-element (no pivot) swap */
@@ -641,8 +641,8 @@ function animateItem() {
     barObject1 = barList.getItemByValue(elementValue1);
     barObject2 = barList.getItemByValue(elementValue2);
 
-    barObject1.setColor("rgb(148, 77, 255)");
-    barObject2.setColor("rgb(148, 77, 255)");
+    barObject1.setColor("rgb(67, 77, 255)");
+    barObject2.setColor("rgb(67, 77, 255)");
   }
 
   // INITIALIZE OFFSCREEN CANVAS
@@ -659,7 +659,7 @@ function animateItem() {
           pivotValue == barItem.getValue()
         )
       ) {
-        barItem.setColor("rgb(174, 227, 234)");
+        barItem.setColor("rgb(197, 197, 255)");
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(
           barItem.getOriginX(),
@@ -681,7 +681,7 @@ function animateItem() {
           pivotValue == barItem.getValue()
         )
       ) {
-        barItem.setColor("rgb(0, 191, 207)");
+        barItem.setColor("rgb(147, 147, 255)");
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(
           barItem.getOriginX(),
@@ -934,7 +934,7 @@ function generateBars() {
   context.clearRect(0, 0, canvasWidth, canvasHeight);
 
   for (const barItem of ourBarArray) {
-    barItem.setColor("rgb(63, 191, 207)");
+    barItem.setColor("rgb(147, 147, 255)");
     context.fillStyle = barItem.getColor();
     context.fillRect(
       barItem.getOriginX(),
@@ -967,6 +967,7 @@ function startHeapsort() {
     requestAnimationFrame(startAnimation);
   }
 }
+
 function startBubblesort() {
   if (!sortingStarted) {
     disableSortButtons();

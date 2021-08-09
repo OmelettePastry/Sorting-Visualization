@@ -5,11 +5,11 @@ body {
 #heading-one {
   text-align: center;
   font-family: Arial;
-  background-color: lightgreen;
+  background-color: lightblue;
   padding: 20px;
 
-  border-bottom: 2px solid green;
-  border-top: 2px solid green;
+  border-top: 2px solid steelblue;
+  border-bottom: 2px solid steelblue;
 }
 
 #canvas-div {
