@@ -122,7 +122,6 @@ startHeapSortButton.addEventListener("click", startHeapsort);
 
 animateCheckBox.addEventListener("change", function () {
   if (this.checked) {
-    // console.log("checked");
     rangeInput.disabled = false;
     animateBars = true;
     WAIT_LIMIT = 1;
@@ -311,9 +310,6 @@ function heapSort() {
     index--;
   }
 
-  // console.log("heapify done");
-  // console.log(numberArray);
-
   for (let i = 0; i < numberArray.length; i++) {
     listArray.push(
       new AnimateCompare(
@@ -325,7 +321,6 @@ function heapSort() {
       )
     );
     numberArray[numberArray.length - 1 - i] = popValue();
-    console.log(numberArray[numberArray.length - 1 - i]);
   }
 }
 
@@ -650,8 +645,6 @@ function animateItem() {
     barObject2.setColor("rgb(148, 77, 255)");
   }
 
-  // console.log(barObject1, barObject2);
-
   // INITIALIZE OFFSCREEN CANVAS
   // Draw static background to offscreen canvas if not already initialized
   if (initializedOff === false) {
@@ -884,6 +877,7 @@ function createNewArray() {
 
   enableSortButtons();
   ungreyButtons();
+
   algorithmText.style.color = "black";
   algorithmText.style.fontWeight = "300";
   algorithmText.textContent = "Algorithms";
@@ -894,8 +888,6 @@ function createNewArray() {
   heapArraySize = numberArray.length;
   item = undefined;
 
-  // bubbleSort(ourArray);
-  // quickSort(ourArray);
 
   sortingStarted = false;
 
@@ -1000,20 +992,14 @@ function startBubblesort() {
 
 function greyButtons() {
   startBubblesortButton.style.background = "rgb(159, 207, 159)";
-  startBubblesortButton.style.borderColor = "rgb(191, 239, 191)";
   startHeapSortButton.style.background = "rgb(159, 207, 159)";
-  startHeapSortButton.style.borderColor = "rgb(191, 239, 191)";
   startQuicksortButton.style.background = "rgb(159, 207, 159)";
-  startQuicksortButton.style.borderColor = "rgb(191, 239, 191)";
 }
 
 function ungreyButtons() {
   startBubblesortButton.style.background = "seagreen";
-  startBubblesortButton.style.borderColor = "darkgreen";
   startHeapSortButton.style.background = "seagreen";
-  startHeapSortButton.style.borderColor = "darkgreen";
   startQuicksortButton.style.background = "seagreen";
-  startQuicksortButton.style.borderColor = "darkgreen";
 }
 
 function startQuicksort() {
@@ -1053,7 +1039,6 @@ function enableSortButtons() {
 
 function initBarAnimation() {
   if (animateCheckBox.checked) {
-    // console.log("checked");
     rangeInput.disabled = false;
     animateBars = true;
   } else {
@@ -1069,32 +1054,13 @@ function main() {
 
   barList = createBarList(BAR_WIDTH);
 
-  // quickSort(ourArray);
-  // bubbleSort(ourArray);
-  // console.log(ourArray);
-  // console.log(listArray);
-
   generateBars();
-
-  /*
-  console.log(numberArray);
-
-  heapSort(numberArray);
-
-  console.log(numberArray);
-  */
 
   // Set playing boolean to false
   playing = false;
 
-  // Testing - bubble sort
 
-  /**
-  let ourBubbleArray = getRandomArray(20);
-  console.log(ourBubbleArray);
-  bubbleSort(ourBubbleArray);
-  console.log(ourBubbleArray);
-  */
+ 
 }
 
 main();
