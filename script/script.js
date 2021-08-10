@@ -73,6 +73,9 @@ const PIVOT_HIGHLIGHT = "pivot-highlight"; // Represents highlight of a comparis
 const TWO_SORT_SWAP = "two-sort-swap";
 const TWO_HIGHLIGHT = "two-highlight";
 
+const BAR_COLOR = "rgb(171, 147, 255)";
+const LIGHT_BAR_COLOR = "rgb(221, 197, 255)";
+
 // Highlight counter limit (for determining how lond a highlight animation lasts)
 const HIGHLIGHT_LIMIT = 0;
 
@@ -610,7 +613,7 @@ function animateItem() {
 
     // Set colors for the bars
     barObject1.setColor("rgb(255, 77, 148)");
-    barObject2.setColor("rgb(67, 97, 255)");
+    barObject2.setColor("rgb(57, 97, 255)");
 
     /** Animation setup for SORT-SWAP */
   } else if (
@@ -626,8 +629,8 @@ function animateItem() {
     pivotObject = barList.getItemByValue(pivotValue);
 
     // Set colors for the bars
-    barObject1.setColor("rgb(67, 77, 255)");
-    barObject2.setColor("rgb(67, 77, 255)");
+    barObject1.setColor("rgb(57, 57, 255)");
+    barObject2.setColor("rgb(57, 57, 255)");
     pivotObject.setColor("rgb(255, 77, 148)");
 
     /** Animation setup for a two-element (no pivot) swap */
@@ -641,8 +644,8 @@ function animateItem() {
     barObject1 = barList.getItemByValue(elementValue1);
     barObject2 = barList.getItemByValue(elementValue2);
 
-    barObject1.setColor("rgb(67, 77, 255)");
-    barObject2.setColor("rgb(67, 77, 255)");
+    barObject1.setColor("rgb(57, 57, 255)");
+    barObject2.setColor("rgb(57, 57, 255)");
   }
 
   // INITIALIZE OFFSCREEN CANVAS
@@ -659,7 +662,7 @@ function animateItem() {
           pivotValue == barItem.getValue()
         )
       ) {
-        barItem.setColor("rgb(197, 197, 255)");
+        barItem.setColor(LIGHT_BAR_COLOR);
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(
           barItem.getOriginX(),
@@ -681,7 +684,7 @@ function animateItem() {
           pivotValue == barItem.getValue()
         )
       ) {
-        barItem.setColor("rgb(147, 147, 255)");
+        barItem.setColor(BAR_COLOR);
         offCanvasContext.fillStyle = barItem.getColor();
         offCanvasContext.fillRect(
           barItem.getOriginX(),
@@ -934,7 +937,7 @@ function generateBars() {
   context.clearRect(0, 0, canvasWidth, canvasHeight);
 
   for (const barItem of ourBarArray) {
-    barItem.setColor("rgb(147, 147, 255)");
+    barItem.setColor(BAR_COLOR);
     context.fillStyle = barItem.getColor();
     context.fillRect(
       barItem.getOriginX(),
@@ -1059,8 +1062,6 @@ function main() {
 
   // Set playing boolean to false
   playing = false;
-
-
  
 }
 
