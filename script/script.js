@@ -90,7 +90,7 @@ const FIXED_SPEED = 1; // Fixed speed
 const BAR_SPACING = 4;
 
 // Wait some time, as animate checkbox is initially unchecked
-const WAIT_LIMIT = 2; // > 0
+let WAIT_LIMIT = 2; // > 0
 
 const barBottomPlacement = canvasHeight - 5; // How high off the bottom should the bars be
 
